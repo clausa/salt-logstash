@@ -1,0 +1,4 @@
+tofrodos:
+  pkg:
+    - installed
+
