@@ -6,5 +6,5 @@ base:
     - elasticsearch
 
   'logstash*':
-#    - logstash
+    - logstash
     - kibana
