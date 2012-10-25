@@ -8,3 +8,4 @@ base:
   'logstash*':
     - logstash
     - kibana
+    - rsyslog-server

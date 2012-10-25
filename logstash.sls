@@ -77,6 +77,7 @@ logstash:
     - running
     - watch:
       - file: /etc/init/logstash.conf
+      - file: /etc/logstash/logstash.conf
     - require: 
       - user: logstash
   user:
