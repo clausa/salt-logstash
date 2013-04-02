@@ -2,25 +2,6 @@ openjdk-7-jre-headless:
   pkg:
     - installed
 
-/var/cache/apt/archives/logstash_1.1.1_all.deb:
-  file:
-    - managed
-    - source: salt://files/logstash_1.1.1_all.deb
-
-dpkg -i /var/cache/apt/archives/logstash_1.1.1_all.deb:
-  cmd:
-    - run
-    - unless: dpkg --get-selections | grep logstash | grep install
-    - require:
-      - file: /var/cache/apt/archives/logstash_1.1.1_all.deb
-      - pkg: openjdk-7-jre-headless
-
-/usr/share/logstash/logstash-1.1.1-monolithic.jar:
-  file.managed:
-    - user: root
-    - group: root
-    - mode: 664
-
 /srv/logstash/:
   file.directory:
     - makedirs: True
@@ -55,6 +36,15 @@ dpkg -i /var/cache/apt/archives/logstash_1.1.1_all.deb:
     - source: salt://files/logstash.init
 
 logstash:
+  file.managed:
+    - source: https://logstash.objects.dreamhost.com/release/logstash-1.1.9-monolithic.jar
+    - source_hash: md5=70addd3ccd37e796f473fe5647c31126
+    - name: /usr/share/logstash/logstash-latest-monolithic.jar
+    - user: root
+    - group: root
+    - mode: 664
+    - require:
+      - pkg: openjdk-7-jre-headless
   service:
     - running
     - watch:
@@ -64,8 +54,6 @@ logstash:
       - user: logstash
   user:
     - present
-    - system: True
-
-
-
-
+    - fullname: Logstash User
+    - home: /srv/logstash
+    - system: true

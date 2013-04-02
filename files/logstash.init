@@ -16,5 +16,5 @@ setgid logstash
 console log
 
 script
-  exec java -jar /usr/share/logstash/logstash-1.1.1-monolithic.jar agent -f /etc/logstash/ --log /srv/logstash/log/agent.out
+  exec java -jar /usr/share/logstash/logstash-latest-monolithic.jar agent -f /etc/logstash/ --log /srv/logstash/log/agent.out
 end script

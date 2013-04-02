@@ -24,15 +24,6 @@ https://github.com/rashidkpc/Kibana.git:
     - require:
       - pkg: git
 
-/srv/kibana/KibanaConfig.rb:
-  file:
-    - sed
-    - onlyif: grep "localhost:9200" /srv/kibana/KibanaConfig.rb
-    - before: '"localhost:9200"'
-    - after: '["195.41.32.192:9200","195.41.32.196:9200"]'
-    - require: 
-      - git: https://github.com/rashidkpc/Kibana.git
-
 /etc/apache2/sites-available/logstash:
   file:
     - managed

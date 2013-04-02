@@ -1,27 +1,28 @@
-openjdk-7-jre-headless:
-  pkg:
-    - installed
+requirements:
+  pkg.installed:
+    - pkgs:
+      - openjdk-7-jre-headless
+      - curl
 
-/var/cache/apt/archives/elasticsearch-0.19.10.deb:
-  file:
-    - managed
-    - source: salt://files/elasticsearch-0.19.10.deb
-
-dpkg -i /var/cache/apt/archives/elasticsearch-0.19.10.deb:
-  cmd:
-    - run
-    - unless: service elasticsearch status
+elasticsearch:
+  pkg.installed:
+    - sources:
+      - elasticsearch: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.20.6.deb
     - require:
-      - file: /var/cache/apt/archives/elasticsearch-0.19.10.deb
-      - pkg: openjdk-7-jre-headless
+      - pkg: requirements
+  service:
+    - running
+    - watch:
+      - file: /etc/elasticsearch/elasticsearch.yml
+      - file: /etc/security/limits.conf
 
 /etc/default/elasticsearch:
   file:
     - sed
     - before: '#ES_HEAP_SIZE=2g'
-    - after: ES_HEAP_SIZE={{ grains['mem_total']-2000 }}m
+    - after: ES_HEAP_SIZE={{ (grains['mem_total']/2)|round|int }}m
     - require:
-      - cmd: dpkg -i /var/cache/apt/archives/elasticsearch-0.19.10.deb
+      - pkg: elasticsearch
 
 /etc/elasticsearch/elasticsearch.yml:
   file:
@@ -30,21 +31,14 @@ dpkg -i /var/cache/apt/archives/elasticsearch-0.19.10.deb:
     - source: salt://files/elasticsearch.yml
     - template: jinja
     - require:
-      - cmd: dpkg -i /var/cache/apt/archives/elasticsearch-0.19.10.deb
-
-elasticsearch:
-  service:
-    - running
-    - watch:
-      - file: /etc/elasticsearch/elasticsearch.yml
-      - file: /etc/security/limits.conf
+      - pkg: elasticsearch
 
 /usr/share/elasticsearch/bin/plugin -install karmi/elasticsearch-paramedic:
   cmd:
     - run
     - unless: curl -s http://localhost:9200/_plugin/paramedic/index.html | grep Paramedic
     - require:
-      - cmd: dpkg -i /var/cache/apt/archives/elasticsearch-0.19.10.deb
+      - pkg: elasticsearch
 
 /etc/pam.d/su:
   file:
@@ -58,4 +52,3 @@ elasticsearch:
     - text:
       - elasticsearch soft nofile 60000
       - elasticsearch hard nofile 60000
-
