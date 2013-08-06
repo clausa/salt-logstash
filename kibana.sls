@@ -7,7 +7,11 @@ libapache2-mod-passenger:
     - installed
 
 ruby:
-  pkg: 
+  pkg:
+    - installed
+
+ruby-dev:
+  pkg:
     - installed
 
 rubygems:
