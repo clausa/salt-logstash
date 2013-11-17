@@ -35,6 +35,12 @@ openjdk-7-jre-headless:
     - managed
     - source: salt://files/logstash.init
 
+/usr/share/logstash/:
+  file.directory:
+    - makedirs: True
+    - user: root
+    - group: root
+
 logstash:
   file.managed:
     - source: https://logstash.objects.dreamhost.com/release/logstash-1.1.9-monolithic.jar
